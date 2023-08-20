@@ -14,7 +14,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	char preKeys[256] = {0};
 
 	Vector3 cameraRotate{0.26f, 0.0f, 0.0f};
-	Vector3 cameraTranslate{0.0f, 1.9f, -6.49f};
+	Vector3 cameraTranslate{0.0f, 1.9f, -16.49f};
 
 	// ウィンドウの×ボタンが押されるまでループ
 	while (Novice::ProcessMessage() == 0) {
@@ -39,15 +39,17 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		ImGui::End();
 
 		Matrix4x4 CameraMatWorld = MakeAffineMatrix(
-			{0, 0, 0}, cameraRotate, cameraTranslate);
+			{1.0f, 1.0f, 1.0f}, cameraRotate, cameraTranslate);
 
-		Matrix4x4 viewProjectionMatrix = MakeOrthographicMatrix(
-		    -float(kWindowWidth) / 2,
-			float(kWindowHeight) / 2,
-			float(kWindowWidth) / 2,
-		    -float(kWindowHeight) / 2,
-			0.0f,
+		Matrix4x4 viewMatrix = Inverse(CameraMatWorld);
+
+		Matrix4x4 ProjectionMatrix = MakePerspectiveFovMatrix(
+			0.45f,
+			float(kWindowWidth) / float(kWindowHeight),
+			0.1f,
 			100.0f);
+
+		Matrix4x4 viewProjectionMatrix = Multiply(viewMatrix, ProjectionMatrix);
 		    
 		Matrix4x4 viewportMatrix = MakeViewportMatrix(
 			0.0f,
@@ -66,7 +68,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		///
 		
 		DrawGrid(viewProjectionMatrix, viewportMatrix);
-
+		DrawSphere(sphere, viewProjectionMatrix, viewportMatrix,0x000000ff);
 
 		///
 		/// ↑描画処理ここまで
