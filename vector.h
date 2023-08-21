@@ -30,6 +30,23 @@ typedef struct Vector3 {
 	float z;
 } Vector3;
 
+struct Line//直線
+{
+	Vector3 origin;//始点
+	Vector3 diff;//終点
+};
+
+struct Ray//半直線
+{
+	Vector3 origin;
+	Vector3 diff;
+};
+
+struct Segment//線分
+{
+	Vector3 origin;
+	Vector3 diff;
+};
 
 Matrix2x2 Add(Matrix2x2 a, Matrix2x2 b) {
 	Matrix2x2 add;
@@ -791,5 +808,20 @@ Vector3 TransformNormal(const Vector3& v, const Matrix4x4& m) {
 		v.x * m.m[0][1] + v.y * m.m[1][1] + v.z * m.m[2][1],
 		v.x * m.m[0][2] + v.y * m.m[1][2] + v.z * m.m[2][2],
 	};
+	return result;
+}
+
+Vector3 Project(const Vector3& v1, const Vector3& v2)//正射影ベクトル
+{
+	Vector3 proj;
+	Vector3 newV2 = Normalize(v2);
+	proj = Multiply(Dot(v1, newV2), newV2);
+	return proj;
+}
+
+Vector3 ClosestPoint(const Vector3&point,const Segment&segment)//最近接点
+{
+	Vector3 result;
+	result = Add(segment.origin, point);
 	return result;
 }
