@@ -822,6 +822,6 @@ Vector3 Project(const Vector3& v1, const Vector3& v2)//正射影ベクトル
 Vector3 ClosestPoint(const Vector3&point,const Segment&segment)//最近接点
 {
 	Vector3 result;
-	result = Add(segment.origin, point);
+	result = Add(segment.origin, Project(Subtract(point, segment.origin),segment.diff));
 	return result;
 }

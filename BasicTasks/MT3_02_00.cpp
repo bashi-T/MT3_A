@@ -57,6 +57,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			0,
 			1);
 
+
+
 		Vector3 project = Project(Subtract(point, segment.origin), segment.diff);
 		Vector3 closestPoint = ClosestPoint(point, segment);
 
