@@ -37,7 +37,7 @@
     <ClCompile Include="C:\KamataEngine\DirectXGame\2d\ImGuiManager.cpp">
       <Filter>KamataEngine</Filter>
     </ClCompile>
-    <ClCompile Include="BasicTasks\MT3_02_01.cpp">
+    <ClCompile Include="BasicTasks\MT3_02_02.cpp">
       <Filter>KamataEngine</Filter>
     </ClCompile>
   </ItemGroup>

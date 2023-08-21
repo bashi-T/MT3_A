@@ -48,6 +48,11 @@ struct Segment//線分
 	Vector3 diff;
 };
 
+struct Plane {//平面
+	Vector3 normal;//法線
+	float distance;//距離
+};
+
 Matrix2x2 Add(Matrix2x2 a, Matrix2x2 b) {
 	Matrix2x2 add;
 	for (int x = 0; x < 2; x++) {
@@ -819,9 +824,18 @@ Vector3 Project(const Vector3& v1, const Vector3& v2)//正射影ベクトル
 	return proj;
 }
 
-Vector3 ClosestPoint(const Vector3&point,const Segment&segment)//最近接点
+Vector3 ClosestPoint(const Vector3& point, const Segment& segment)//最近接点
 {
 	Vector3 result;
 	result = Add(segment.origin, Project(Subtract(point, segment.origin),segment.diff));
 	return result;
+}
+
+Vector3 Perpendicular(const Vector3& vector)
+{
+	if (vector.x != 0.0f || vector.y != 0.0f)
+	{
+		return { -vector.y,vector.x,0.0f };
+	}
+	return { 0.0f,-vector.z,vector.y };
 }
