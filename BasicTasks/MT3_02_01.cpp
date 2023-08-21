@@ -1,7 +1,7 @@
 #include "Drawer.h"
 #include<imgui.h>
 
-const char kWindowTitle[] = "MT3_02_00";
+const char kWindowTitle[] = "MT3_02_01";
 
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
@@ -16,9 +16,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	Vector3 cameraRotate{0.26f, 0.0f, 0.0f};
 	Vector3 cameraTranslate{0.0f, 3.9f, -16.49f};
 
-	Vector3 point{ -1.5f,0.6f,0.6f };
+	Vector3 point{ 1.5f,0.6f,0.6f };
 	Segment segment{ {-2.0f,-1.0f,0.0f},{3.0f,2.0f,2.0f} };
 
+	Sphere pointSphere1{ point,1.0f };
+	Sphere pointSphere2{ segment.origin,1.0f };
+
+	int color1 = WHITE;
+	int color2 = WHITE;
 
 	// ウィンドウの×ボタンが押されるまでループ
 	while (Novice::ProcessMessage() == 0) {
@@ -34,10 +39,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		/// ↓更新処理ここから
 		///
 		
-
-
 		Matrix4x4 CameraMatWorld = MakeAffineMatrix(
-			{1.0f, 1.0f, 1.0f}, cameraRotate, cameraTranslate);
+			{ 1.0f, 1.0f, 1.0f }, cameraRotate, cameraTranslate);
 
 		Matrix4x4 viewMatrix = Inverse(CameraMatWorld);
 
@@ -48,7 +51,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			100.0f);
 
 		Matrix4x4 viewProjectionMatrix = Multiply(viewMatrix, ProjectionMatrix);
-		    
+
 		Matrix4x4 viewportMatrix = MakeViewportMatrix(
 			0.0f,
 			0.0f,
@@ -58,26 +61,30 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			1);
 
 
+		float distance = Length(Subtract(pointSphere2.center, pointSphere1.center));
 
-		Vector3 project = Project(Subtract(point, segment.origin), segment.diff);
-		Vector3 closestPoint = ClosestPoint(point, segment);
+		if (distance <= pointSphere1.radius + pointSphere2.radius)
+		{
+			color1 = RED;
+		}
+		else {
+			color1 = WHITE;
+		}
 
-		Sphere pointSphere{ point,0.01f };
-		Sphere closestPointSphere{ closestPoint,0.01f };
 
-		Vector3 start = Transform(Transform(segment.origin, viewProjectionMatrix), viewportMatrix);
-		Vector3 end = Transform(Transform(Add(segment.origin,segment.diff), viewProjectionMatrix), viewportMatrix);
 
 
 		ImGui::Begin("Window");
 		ImGui::DragFloat3("CameraTranslate", &cameraTranslate.x, 0.01f);
 		ImGui::DragFloat3("CameraRotate", &cameraRotate.x, 0.01f);
-		ImGui::DragFloat3("point", &point.x, 0.01f);
-		ImGui::DragFloat3("segment.origin", &segment.origin.x, 0.01f);
-		ImGui::DragFloat3("segment.diff", &segment.diff.x, 0.01f);
-		//ImGui::DragFloat3("SphereCenter", &sphere.center.x, 0.01f);
-		//ImGui::DragFloat("SphereRadius", &sphere.radius, 0.01f);
-		ImGui::InputFloat3("Project", &project.x, "%.3f",ImGuiInputTextFlags_ReadOnly);
+		//ImGui::DragFloat3("point", &point.x, 0.01f);
+		//ImGui::DragFloat3("segment.origin", &segment.origin.x, 0.01f);
+		//ImGui::DragFloat3("segment.diff", &segment.diff.x, 0.01f);
+		ImGui::DragFloat3("SphereCenter1", &pointSphere1.center.x, 0.01f);
+		ImGui::DragFloat("SphereRadius1", &pointSphere1.radius, 0.01f);
+		ImGui::DragFloat3("SphereCenter2", &pointSphere2.center.x, 0.01f);
+		ImGui::DragFloat("SphereRadius2", &pointSphere2.radius, 0.01f);
+		//ImGui::InputFloat3("Project", &project.x, "%.3f",ImGuiInputTextFlags_ReadOnly);
 		ImGui::End();
 
 		///
@@ -89,9 +96,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		///
 		
 		DrawGrid(viewProjectionMatrix, viewportMatrix);
-		DrawSphere(pointSphere, viewProjectionMatrix, viewportMatrix, RED);
-		DrawSphere(closestPointSphere, viewProjectionMatrix, viewportMatrix, BLACK);
-		Novice::DrawLine(int(start.x), int(start.y), int(end.x), int(end.y), WHITE);
+		DrawSphere(pointSphere1, viewProjectionMatrix, viewportMatrix, color1);
+		DrawSphere(pointSphere2, viewProjectionMatrix, viewportMatrix, color2);
 		///
 		/// ↑描画処理ここまで
 		///
