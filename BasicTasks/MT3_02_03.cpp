@@ -1,7 +1,7 @@
 #include "Drawer.h"
 #include<imgui.h>
 
-const char kWindowTitle[] = "MT3_02_02";
+const char kWindowTitle[] = "MT3_02_03";
 
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
@@ -14,16 +14,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	char preKeys[256] = {0};
 
 	Vector3 cameraRotate{0.26f, 0.0f, 0.0f};
-	Vector3 cameraTranslate{0.0f, 3.9f, -16.49f};
+	Vector3 cameraTranslate{0.0f, 7.0f, -40.0f};
 
 	Vector3 point{ 1.5f,0.6f,0.6f };
 
-	Sphere pointSphere1{ point,1.0f };
-	//Sphere pointSphere2{ segment.origin,1.0f };
 	int color1 = WHITE;
-	//int color2 = WHITE;
 
-	Plane plane{ {0.0f,1.0f,0.0f},3.0f };
+	Plane plane{ {0.0f,1.0f,0.0f},5.0f };
+	Segment segment{ {0.0f,0.0f,0.0f},{6.0f,4.0f,0.0f} };
 
 	// ウィンドウの×ボタンが押されるまでループ
 	while (Novice::ProcessMessage() == 0) {
@@ -59,25 +57,33 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			0,
 			1);
 
-		float distance = Dot(pointSphere1.center, plane.normal) - plane.distance;
-		distance = sqrt(distance * distance);
 
-		if (distance <= pointSphere1.radius)
+		float dot = Dot(Subtract(segment.diff, segment.origin), plane.normal);
+		//float dot = Dot(segment.diff, plane.normal);
+		if (dot != 0.0f)
 		{
-			color1 = RED;
-		}
-		else {
-			color1 = WHITE;
-		}
+			float t = (plane.distance - Dot(segment.origin, plane.normal)) / dot;
+			Novice::ScreenPrintf(10, 10, "%f", t);
+		
+			if (t>=0.0f&&t<=1.0f)
+			{
+				color1 = RED;
+			}
+			else {
+				color1 = WHITE;
+			}
 
+		};
 
+		Vector3 start = Transform(Transform(segment.origin, viewProjectionMatrix), viewportMatrix);
+		Vector3 end = Transform(Transform(Add(segment.origin, segment.diff), viewProjectionMatrix), viewportMatrix);
 
 
 		ImGui::Begin("Window");
 		ImGui::DragFloat3("CameraTranslate", &cameraTranslate.x, 0.01f);
 		ImGui::DragFloat3("CameraRotate", &cameraRotate.x, 0.01f);
-		ImGui::DragFloat3("SphereCenter1", &pointSphere1.center.x, 0.01f);
-		ImGui::DragFloat("SphereRadius1", &pointSphere1.radius, 0.01f);
+		ImGui::DragFloat3("segment.origin", &segment.origin.x, 0.01f);
+		ImGui::DragFloat3("segment.diff", &segment.diff.x, 0.01f);
 		ImGui::DragFloat3("Plane.Normal", &plane.normal.x, 0.01f);
 		plane.normal = Normalize(plane.normal);
 		ImGui::End();
@@ -91,9 +97,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		///
 		
 		DrawGrid(viewProjectionMatrix, viewportMatrix);
-		DrawSphere(pointSphere1, viewProjectionMatrix, viewportMatrix, color1);
 		DrawPlane(plane, viewProjectionMatrix, viewportMatrix, BLACK);
-		//DrawSphere(pointSphere2, viewProjectionMatrix, viewportMatrix, color2);
+		Novice::DrawLine(int(start.x), int(start.y), int(end.x), int(end.y), color1);
+
 		///
 		/// ↑描画処理ここまで
 		///

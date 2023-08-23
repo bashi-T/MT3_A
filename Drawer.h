@@ -14,11 +14,11 @@ void DrawGrid(const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMa
 	for (uint32_t xIndex = 0; xIndex <= kSubdivision; ++xIndex)
 	{
 		Vector3 positionStartGrid =
-		{-kGridHalfwidth + kGridEvery * xIndex, 0, kGridHalfwidth * 2};
+		{-kGridHalfwidth + kGridEvery * xIndex, 0, kGridHalfwidth};
 		Matrix4x4 gridStartPoint = MakeAffineMatrix(
 			{ 1.0f,1.0f,1.0f }, { 0.0f,0.0f,0.0f }, { 0.0f,0.0f,0.0f });
 		Vector3 positionEndGrid =
-		{-kGridHalfwidth + kGridEvery * xIndex, 0, 0};
+		{-kGridHalfwidth + kGridEvery * xIndex, 0, -kGridHalfwidth };
 		Matrix4x4 gridEndPoint = MakeAffineMatrix(
 			{ 1.0f,1.0f,1.0f }, { 0.0f,0.0f,0.0f }, {0.0f,0.0f,0.0f});
 
@@ -37,10 +37,10 @@ void DrawGrid(const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMa
 	for (uint32_t zIndex = 0; zIndex <= kSubdivision; ++zIndex)
 	{
 		Vector3 positionStartGrid =
-		{-kGridHalfwidth, 0, kGridHalfwidth * 2 - kGridEvery * zIndex};
+		{-kGridHalfwidth, 0, kGridHalfwidth - kGridEvery * zIndex};
 
 		Vector3 positionEndGrid =
-		{kGridHalfwidth, 0, kGridHalfwidth * 2 - kGridEvery * zIndex};
+		{kGridHalfwidth, 0, kGridHalfwidth - kGridEvery * zIndex};
 
 		positionStartGrid = Transform(Transform(positionStartGrid, viewProjectionMatrix), viewportMatrix);
 
@@ -135,14 +135,9 @@ void DrawPlane(Plane&plane,const Matrix4x4&viewProjectionMatrix,const Matrix4x4&
 		Vector3 point = Add(center, extend);
 		points[index] = Transform(Transform(point, viewProjectionMatrix), viewportMatrix);
 	}
-	Novice::DrawLine(int(points[0].x), int(points[0].y),
-		int(points[1].x), int(points[1].y), color);
 
 	Novice::DrawLine(int(points[1].x), int(points[1].y),
 		int(points[2].x), int(points[2].y), color);
-
-	Novice::DrawLine(int(points[2].x), int(points[2].y),
-		int(points[3].x), int(points[3].y), color);
 
 	Novice::DrawLine(int(points[3].x), int(points[3].y),
 		int(points[0].x), int(points[0].y), color);
