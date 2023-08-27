@@ -22,6 +22,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	Plane plane{ {0.0f,1.0f,0.0f},5.0f };
 	Segment segment{ {0.0f,0.0f,0.0f},{6.0f,4.0f,0.0f} };
+	Triangle triangle{};
+	triangle.vertices[0] = { -3.0f,0.0f,3.0f };
+	triangle.vertices[1] = {  0.0f,3.0f,3.0f };
+	triangle.vertices[2] = {  3.0f,0.0f,3.0f };
 
 	// ウィンドウの×ボタンが押されるまでループ
 	while (Novice::ProcessMessage() == 0) {
@@ -57,23 +61,52 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			0,
 			1);
 
+		Vector3 v01 = Subtract(triangle.vertices[1], triangle.vertices[0]);
+		Vector3 v12 = Subtract(triangle.vertices[2], triangle.vertices[1]);
+		Vector3 v20 = Subtract(triangle.vertices[0], triangle.vertices[2]);
+		plane.normal =Normalize(Cross(v01, v12));
+		plane.distance = Dot(triangle.vertices[1], plane.normal);
 
 		float dot = Dot(Subtract(segment.diff, segment.origin), plane.normal);
-		//float dot = Dot(segment.diff, plane.normal);
 		if (dot != 0.0f)
 		{
 			float t = (plane.distance - Dot(segment.origin, plane.normal)) / dot;
 			Novice::ScreenPrintf(10, 10, "%f", t);
-		
-			if (t>=0.0f&&t<=1.0f)
+			if (t >= 0.0f && t <= 1.0f)
 			{
-				color1 = RED;
+				Vector3 v0p = Subtract(Multiply(t, Subtract(segment.diff, segment.origin)), triangle.vertices[0]);
+				Vector3 v1p = Subtract(Multiply(t, Subtract(segment.diff, segment.origin)), triangle.vertices[1]);
+				Vector3 v2p = Subtract(Multiply(t, Subtract(segment.diff, segment.origin)), triangle.vertices[2]);
+
+				Vector3 cross01 = Cross(v01, v1p);
+				Vector3 cross12 = Cross(v12, v2p);
+				Vector3 cross20 = Cross(v20, v0p);
+
+				if (Dot(cross01, plane.normal) >= 0.0f &&
+					Dot(cross12, plane.normal) >= 0.0f &&
+					Dot(cross20, plane.normal) >= 0.0f)
+				{
+					color1 = RED;
+				}
+				else
+				{
+					color1 = WHITE;
+				}
+
+
+				
 			}
-			else {
+			else
+			{
 				color1 = WHITE;
 			}
 
-		};
+
+		}
+		else
+		{
+			color1 = WHITE;
+		}
 
 		Vector3 start = Transform(Transform(segment.origin, viewProjectionMatrix), viewportMatrix);
 		Vector3 end = Transform(Transform(Add(segment.origin, segment.diff), viewProjectionMatrix), viewportMatrix);
@@ -84,8 +117,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		ImGui::DragFloat3("CameraRotate", &cameraRotate.x, 0.01f);
 		ImGui::DragFloat3("segment.origin", &segment.origin.x, 0.01f);
 		ImGui::DragFloat3("segment.diff", &segment.diff.x, 0.01f);
-		ImGui::DragFloat3("Plane.Normal", &plane.normal.x, 0.01f);
-		plane.normal = Normalize(plane.normal);
+		ImGui::DragFloat3("triangle.vertices[0]", &triangle.vertices[0].x, 0.01f);
+		ImGui::DragFloat3("triangle.vertices[1]", &triangle.vertices[1].x, 0.01f);
+		ImGui::DragFloat3("triangle.vertices[2]", &triangle.vertices[2].x, 0.01f);
 		ImGui::End();
 
 		///
@@ -97,7 +131,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		///
 		
 		DrawGrid(viewProjectionMatrix, viewportMatrix);
-		DrawPlane(plane, viewProjectionMatrix, viewportMatrix, BLACK);
+		//DrawPlane(plane, viewProjectionMatrix, viewportMatrix, WHITE);
+		DrawTriangle(triangle , viewProjectionMatrix, viewportMatrix, WHITE);
 		Novice::DrawLine(int(start.x), int(start.y), int(end.x), int(end.y), color1);
 
 		///

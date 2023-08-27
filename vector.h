@@ -53,6 +53,11 @@ struct Plane {//平面
 	float distance;//距離
 };
 
+struct Triangle
+{
+	Vector3 vertices[3];
+};
+
 Matrix2x2 Add(Matrix2x2 a, Matrix2x2 b) {
 	Matrix2x2 add;
 	for (int x = 0; x < 2; x++) {
@@ -326,7 +331,7 @@ Vector3 Multiply(float scalar, const Vector3& v) {
 	return v3;
 }
 
-float Dot(const Vector3& v1, const Vector3& v2) {
+float Dot(const Vector3& v1, const Vector3& v2) {//内積
 	float dot;
 	dot = v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
 	return dot;
@@ -339,7 +344,7 @@ float Length(const Vector3& v) {
 }
 
 
-Vector3 Normalize(const Vector3& v) {
+Vector3 Normalize(const Vector3& v) {//正規化
 	float length;
 	length = sqrt(v.x * v.x + v.y * v.y + v.z * v.z);
 

@@ -148,3 +148,38 @@ void DrawPlane(Plane&plane,const Matrix4x4&viewProjectionMatrix,const Matrix4x4&
 	Novice::DrawLine(int(points[1].x), int(points[1].y),
 		int(points[3].x), int(points[3].y), color);
 }
+
+void DrawTriangle(const Triangle& triangle,
+	const Matrix4x4& viewProjectionMatrix,
+	const Matrix4x4& viewportMatrix,
+	uint32_t color)
+{
+	Vector3 positionTriangle[3] =
+	{
+        triangle.vertices[0],
+        triangle.vertices[1],
+        triangle.vertices[2]
+	};
+
+	Matrix4x4 triangleVertex = MakeAffineMatrix(
+		{ 1.0f,1.0f,1.0f }, { 0.0f,0.0f,0.0f }, { 0.0f,0.0f,0.0f });
+
+	Matrix4x4 matv1WorldViewProjection = Multiply(triangleVertex, viewProjectionMatrix);
+	positionTriangle[0] = Transform(positionTriangle[0], matv1WorldViewProjection);
+	positionTriangle[0] = Transform(positionTriangle[0], viewportMatrix);
+
+	Matrix4x4 matv2WorldViewProjection = Multiply(triangleVertex, viewProjectionMatrix);
+	positionTriangle[1] = Transform(positionTriangle[1], matv2WorldViewProjection);
+	positionTriangle[1] = Transform(positionTriangle[1], viewportMatrix);
+
+	Matrix4x4 matv3WorldViewProjection = Multiply(triangleVertex, viewProjectionMatrix);
+	positionTriangle[2] = Transform(positionTriangle[2], matv3WorldViewProjection);
+	positionTriangle[2] = Transform(positionTriangle[2], viewportMatrix);
+
+	Novice::DrawTriangle(
+		int(positionTriangle[0].x), int(positionTriangle[0].y),
+		int(positionTriangle[1].x), int(positionTriangle[1].y),
+		int(positionTriangle[2].x), int(positionTriangle[2].y),
+		color, kFillModeWireFrame);
+
+}
