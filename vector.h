@@ -58,6 +58,11 @@ struct Triangle
 	Vector3 vertices[3];
 };
 
+struct AABB {
+	Vector3 min;
+	Vector3 max;
+};
+
 Matrix2x2 Add(Matrix2x2 a, Matrix2x2 b) {
 	Matrix2x2 add;
 	for (int x = 0; x < 2; x++) {

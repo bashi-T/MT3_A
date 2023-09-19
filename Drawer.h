@@ -183,3 +183,82 @@ void DrawTriangle(const Triangle& triangle,
 		color, kFillModeWireFrame);
 
 }
+
+void DrawAABB(const AABB& aabb, const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix, uint32_t color)
+{
+	Vector3 positionAABB[8] =
+	{
+		{aabb.min.x,aabb.min.y,aabb.min.z},
+		{aabb.min.x,aabb.min.y,aabb.max.z},
+		{aabb.max.x,aabb.min.y,aabb.max.z},
+		{aabb.max.x,aabb.min.y,aabb.min.z},
+
+		{aabb.min.x,aabb.max.y,aabb.min.z},
+		{aabb.min.x,aabb.max.y,aabb.max.z},
+		{aabb.max.x,aabb.max.y,aabb.max.z},
+		{aabb.max.x,aabb.max.y,aabb.min.z},
+	};
+
+	Matrix4x4 AABBVertex = MakeAffineMatrix(
+		{ 1.0f,1.0f,1.0f }, { 0.0f,0.0f,0.0f }, { 0.0f,0.0f,0.0f });
+
+	Matrix4x4 matv1WorldViewProjection = Multiply(AABBVertex, viewProjectionMatrix);
+	positionAABB[0] = Transform(positionAABB[0], matv1WorldViewProjection);
+	positionAABB[0] = Transform(positionAABB[0], viewportMatrix);
+
+	Matrix4x4 matv2WorldViewProjection = Multiply(AABBVertex, viewProjectionMatrix);
+	positionAABB[1] = Transform(positionAABB[1], matv2WorldViewProjection);
+	positionAABB[1] = Transform(positionAABB[1], viewportMatrix);
+	
+	Matrix4x4 matv3WorldViewProjection = Multiply(AABBVertex, viewProjectionMatrix);
+	positionAABB[2] = Transform(positionAABB[2], matv3WorldViewProjection);
+	positionAABB[2] = Transform(positionAABB[2], viewportMatrix);
+
+	Matrix4x4 matv4WorldViewProjection = Multiply(AABBVertex, viewProjectionMatrix);
+	positionAABB[3] = Transform(positionAABB[3], matv4WorldViewProjection);
+	positionAABB[3] = Transform(positionAABB[3], viewportMatrix);
+	
+	Matrix4x4 matv5WorldViewProjection = Multiply(AABBVertex, viewProjectionMatrix);
+	positionAABB[4] = Transform(positionAABB[4], matv5WorldViewProjection);
+	positionAABB[4] = Transform(positionAABB[4], viewportMatrix);
+
+	Matrix4x4 matv6WorldViewProjection = Multiply(AABBVertex, viewProjectionMatrix);
+	positionAABB[5] = Transform(positionAABB[5], matv6WorldViewProjection);
+	positionAABB[5] = Transform(positionAABB[5], viewportMatrix);
+	
+	Matrix4x4 matv7WorldViewProjection = Multiply(AABBVertex, viewProjectionMatrix);
+	positionAABB[6] = Transform(positionAABB[6], matv7WorldViewProjection);
+	positionAABB[6] = Transform(positionAABB[6], viewportMatrix);
+
+	Matrix4x4 matv8WorldViewProjection = Multiply(AABBVertex, viewProjectionMatrix);
+	positionAABB[7] = Transform(positionAABB[7], matv8WorldViewProjection);
+	positionAABB[7] = Transform(positionAABB[7], viewportMatrix);
+
+	Novice::DrawLine(int(positionAABB[0].x), int(positionAABB[0].y),
+		int(positionAABB[1].x), int(positionAABB[1].y), color);
+	Novice::DrawLine(int(positionAABB[1].x), int(positionAABB[1].y),
+		int(positionAABB[2].x), int(positionAABB[2].y), color);
+	Novice::DrawLine(int(positionAABB[2].x), int(positionAABB[2].y),
+		int(positionAABB[3].x), int(positionAABB[3].y), color);
+	Novice::DrawLine(int(positionAABB[3].x), int(positionAABB[3].y),
+		int(positionAABB[0].x), int(positionAABB[0].y), color);
+
+	Novice::DrawLine(int(positionAABB[4].x), int(positionAABB[4].y),
+		int(positionAABB[5].x), int(positionAABB[5].y), color);
+	Novice::DrawLine(int(positionAABB[5].x), int(positionAABB[5].y),
+		int(positionAABB[6].x), int(positionAABB[6].y), color);
+	Novice::DrawLine(int(positionAABB[6].x), int(positionAABB[6].y),
+		int(positionAABB[7].x), int(positionAABB[7].y), color);
+	Novice::DrawLine(int(positionAABB[7].x), int(positionAABB[7].y),
+		int(positionAABB[4].x), int(positionAABB[4].y), color);
+
+	Novice::DrawLine(int(positionAABB[0].x), int(positionAABB[0].y),
+		int(positionAABB[4].x), int(positionAABB[4].y), color);
+	Novice::DrawLine(int(positionAABB[1].x), int(positionAABB[1].y),
+		int(positionAABB[5].x), int(positionAABB[5].y), color);
+	Novice::DrawLine(int(positionAABB[2].x), int(positionAABB[2].y),
+		int(positionAABB[6].x), int(positionAABB[6].y), color);
+	Novice::DrawLine(int(positionAABB[3].x), int(positionAABB[3].y),
+		int(positionAABB[7].x), int(positionAABB[7].y), color);
+
+}
