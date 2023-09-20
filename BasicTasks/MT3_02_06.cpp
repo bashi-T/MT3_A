@@ -15,9 +15,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	char preKeys[256] = {0};
 
 	Vector3 cameraRotate{0.26f, 0.0f, 0.0f};
-	Vector3 cameraTranslate{0.0f, 7.0f, -40.0f};
+	Vector3 cameraTranslate{0.0f, 7.0f, -30.0f};
 
 	Vector3 point{ 1.5f,0.6f,0.6f };
+
+	Sphere pointSphere1{ point,1.0f };
 
 	int color1 = WHITE;
 
@@ -68,7 +70,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		aabb1.max.z = (std::max)(aabb1.min.z, aabb1.max.z);
 
 
-		if (isCollision(aabb1)) {
+		if (isCollision(aabb1,pointSphere1)) {
 			color1 = RED;
 		}
 		else {
@@ -80,8 +82,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		ImGui::DragFloat3("CameraRotate", &cameraRotate.x, 0.01f);
 		ImGui::DragFloat3("aabb1.min", &aabb1.min.x, 0.01f);
 		ImGui::DragFloat3("aabb1.max", &aabb1.max.x, 0.01f);
-		ImGui::DragFloat3("aabb2.min", &aabb2.min.x, 0.01f);
-		ImGui::DragFloat3("aabb2.max", &aabb2.max.x, 0.01f);
+		ImGui::DragFloat3("SphereCenter1", &pointSphere1.center.x, 0.01f);
+		ImGui::DragFloat("SphereRadius1", &pointSphere1.radius, 0.01f);
 		ImGui::End();
 
 		///
@@ -94,7 +96,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		
 		DrawGrid(viewProjectionMatrix, viewportMatrix);
 		DrawAABB(aabb1, viewProjectionMatrix, viewportMatrix, color1);
-		DrawAABB(aabb2, viewProjectionMatrix, viewportMatrix, color1);
+		DrawSphere(pointSphere1, viewProjectionMatrix, viewportMatrix, WHITE);
 
 		///
 		/// ↑描画処理ここまで
