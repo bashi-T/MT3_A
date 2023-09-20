@@ -861,3 +861,4 @@ Vector3 Bezier(const Vector3& p0, const Vector3& p1, const Vector3& p2, float t)
 	Vector3 p = Lerp(p0p1, p1p2, t);
 	return p;
 }
+
