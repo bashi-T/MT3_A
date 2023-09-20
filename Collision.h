@@ -1,4 +1,5 @@
 #pragma once
+#include<algorithm>
 #include "vector.h"
 
 //bool IsCollision(const Segment&segment,const Plane&plane)
@@ -23,4 +24,20 @@ bool isCollision(const AABB& aabb1, const AABB& aabb2) {
 		return false;
 	}
 
+}
+
+bool isCollision(const AABB& aabb, const Sphere& sphere)
+{
+	Vector3 closestPoint{
+		std::clamp(sphere.center.x,aabb.min.x,aabb.max.x),
+		std::clamp(sphere.center.y,aabb.min.y,aabb.max.y),
+		std::clamp(sphere.center.z,aabb.min.z,aabb.max.z)
+	};
+	float distance = Length(Subtract(closestPoint,sphere.center));
+	if (distance <= sphere.radius) {
+		return true;
+	}
+	else {
+		return false;
+	}
 }
