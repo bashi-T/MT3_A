@@ -63,7 +63,7 @@ void DrawSphere(const Sphere&sphere_,
 	const Matrix4x4&viewportMatrix,
     uint32_t color)
 {
-	const uint32_t kSubdivision = 20;
+	const uint32_t kSubdivision = 8;
 	const float kLonevery = 2.0f/kSubdivision *pi;
 	const float kLatevery = 2.0f/kSubdivision *pi;
 
@@ -260,5 +260,40 @@ void DrawAABB(const AABB& aabb, const Matrix4x4& viewProjectionMatrix, const Mat
 		int(positionAABB[6].x), int(positionAABB[6].y), color);
 	Novice::DrawLine(int(positionAABB[3].x), int(positionAABB[3].y),
 		int(positionAABB[7].x), int(positionAABB[7].y), color);
+
+}
+
+void DrawBezier(
+	const Vector3& controlpoint0,
+	const Vector3& controlpoint1,
+	const Vector3& controlpoint2,
+	const Matrix4x4& viewProjectionMatrix,
+	const Matrix4x4& viewportMatrix,
+	uint32_t color1,
+	uint32_t color2) {
+	int cutNumber = 8;
+	for (int index = 0; index < cutNumber; index++) {
+		float t01 = index / float(cutNumber);
+		float t12 = (1+index) / float(cutNumber);
+
+		Vector3 bezier0 = Bezier(controlpoint0, controlpoint1, controlpoint2, t01);
+		Vector3 bezier1 = Bezier(controlpoint0, controlpoint1, controlpoint2, t12);
+
+		Matrix4x4 BezierVertex = MakeAffineMatrix(
+			{ 1.0f,1.0f,1.0f }, { 0.0f,0.0f,0.0f }, { 0.0f,0.0f,0.0f });
+
+		Matrix4x4 matb0WorldViewProjection = Multiply(BezierVertex, viewProjectionMatrix);
+		bezier0 = Transform(bezier0, matb0WorldViewProjection);
+		bezier0 = Transform(bezier0, viewportMatrix);
+
+		Matrix4x4 matb1WorldViewProjection = Multiply(BezierVertex, viewProjectionMatrix);
+		bezier1 = Transform(bezier1, matb1WorldViewProjection);
+		bezier1 = Transform(bezier1, viewportMatrix);
+
+		Novice::DrawLine(int(bezier0.x), int(bezier0.y), int(bezier1.x), int(bezier1.y), color1);
+		DrawSphere({ controlpoint0,0.02f }, viewProjectionMatrix, viewportMatrix, color2);
+		DrawSphere({ controlpoint1,0.02f }, viewProjectionMatrix, viewportMatrix, color2);
+		DrawSphere({ controlpoint2,0.02f }, viewProjectionMatrix, viewportMatrix, color2);
+	}
 
 }

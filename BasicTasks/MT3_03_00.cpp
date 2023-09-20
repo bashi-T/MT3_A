@@ -2,7 +2,7 @@
 #include "Collision.h"
 #include<imgui.h>
 
-const char kWindowTitle[] = "MT3_02_07";
+const char kWindowTitle[] = "MT3_03_00";
 
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
@@ -16,18 +16,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	Vector3 cameraRotate{0.26f, 0.0f, 0.0f};
 	Vector3 cameraTranslate{0.0f, 7.0f, -30.0f};
+	uint32_t color1 = RED;
+	uint32_t color2 = BLACK;
 
-	Segment segment
-	{
-		.origin{-0.7f,0.3f,0.0f},
-		.diff{2.0f,-0.5f,0.0f}
-	};
-
-	int color1 = WHITE;
-
-	AABB aabb1{
-		.min{-0.5f,-0.5f,-0.5f},
-		.max{0.5f,0.5f,0.5f},
+	Vector3 controlPoints[3]{
+		{-0.8f,0.58f,1.0f},
+		{1.76f,1.0f,-0.3f},
+		{0.94f,-0.7f,2.3f}
 	};
 
 	// ウィンドウの×ボタンが押されるまでループ
@@ -64,33 +59,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			0,
 			1);
 
-		aabb1.min.x = (std::min)(aabb1.min.x, aabb1.max.x);
-		aabb1.max.x = (std::max)(aabb1.min.x, aabb1.max.x);
-		aabb1.min.y = (std::min)(aabb1.min.y, aabb1.max.y);
-		aabb1.max.y = (std::max)(aabb1.min.y, aabb1.max.y);
-		aabb1.min.z = (std::min)(aabb1.min.z, aabb1.max.z);
-		aabb1.max.z = (std::max)(aabb1.min.z, aabb1.max.z);
 
-
-		if (isCollision(aabb1,segment)) {
-			color1 = RED;
-		}
-		else {
-			color1 = WHITE;
-		}
 
 		ImGui::Begin("Window");
 		ImGui::DragFloat3("CameraTranslate", &cameraTranslate.x, 0.01f);
 		ImGui::DragFloat3("CameraRotate", &cameraRotate.x, 0.01f);
-		ImGui::DragFloat3("aabb1.min", &aabb1.min.x, 0.01f);
-		ImGui::DragFloat3("aabb1.max", &aabb1.max.x, 0.01f);
-		ImGui::DragFloat3("segment.origin", &segment.origin.x, 0.01f);
-		ImGui::DragFloat3("segment.diff", &segment.diff.x, 0.01f);
+		ImGui::DragFloat3("controlPoints[0]", &controlPoints[0].x, 0.01f);
+		ImGui::DragFloat3("controlPoints[1]", &controlPoints[1].x, 0.01f);
+		ImGui::DragFloat3("controlPoints[2]", &controlPoints[2].x, 0.01f);
 		ImGui::End();
-
-
-		Vector3 start = Transform(Transform(segment.origin, viewProjectionMatrix), viewportMatrix);
-		Vector3 end = Transform(Transform(Add(segment.origin, segment.diff), viewProjectionMatrix), viewportMatrix);
 
 		///
 		/// ↑更新処理ここまで
@@ -101,8 +78,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		///
 		
 		DrawGrid(viewProjectionMatrix, viewportMatrix);
-		DrawAABB(aabb1, viewProjectionMatrix, viewportMatrix, color1);
-		Novice::DrawLine(int(start.x), int(start.y), int(end.x), int(end.y), color1);
+		DrawBezier(controlPoints[0], controlPoints[1], controlPoints[2], viewProjectionMatrix, viewportMatrix, color1, color2);
 
 		///
 		/// ↑描画処理ここまで

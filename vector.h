@@ -849,3 +849,15 @@ Vector3 Perpendicular(const Vector3& vector)
 	}
 	return { 0.0f,-vector.z,vector.y };
 }
+
+Vector3 Lerp(const Vector3& v1, const Vector3& v2, float t)
+{
+	return Add(Multiply(t, v1), Multiply((1.0f - t), v2));
+}
+
+Vector3 Bezier(const Vector3& p0, const Vector3& p1, const Vector3& p2, float t) {
+	Vector3 p0p1 = Lerp(p0, p1, t);
+	Vector3 p1p2 = Lerp(p1, p2, t);
+	Vector3 p = Lerp(p0p1, p1p2, t);
+	return p;
+}
