@@ -100,7 +100,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="BasicTasks\MT3_02_06.cpp" />
+    <ClCompile Include="BasicTasks\MT3_02_07.cpp" />
     <ClCompile Include="C:\KamataEngine\DirectXGame\base\DirectXCommon.cpp" />
     <ClCompile Include="C:\KamataEngine\DirectXGame\base\WinApp.cpp" />
     <ClCompile Include="C:\KamataEngine\DirectXGame\scene\GameScene.cpp" />
