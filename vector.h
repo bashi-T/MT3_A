@@ -140,7 +140,7 @@ void MatrixScreenPrintf(int x, int y, Matrix4x4& z) {
 	for (int row = 0; row < 4; row++) {
 		for (int column = 0; column < 4; column++) {
 			Novice::ScreenPrintf(
-				x + column * kcolumnWidth, y + row * kRowHeight, "%6.02f", z.m[row][column]);
+				x + column * kcolumnWidth, y + row * kRowHeight, "%6.03f", z.m[row][column]);
 		}
 	}
 }
@@ -843,4 +843,26 @@ Vector3 Perpendicular(const Vector3& vector)
 		return { -vector.y,vector.x,0.0f };
 	}
 	return { 0.0f,-vector.z,vector.y };
+}
+
+Matrix4x4 MakeRotateAxisAngle(const Vector3& axis, float angle)//行ベクトル
+{
+	Matrix4x4 result;
+	result.m[0][0] = axis.x * axis.x * (1 - cos(angle)) + cos(angle);
+	result.m[0][1] = axis.x * axis.y * (1 - cos(angle)) + axis.z * sin(angle);
+	result.m[0][2] = axis.x * axis.z * (1 - cos(angle)) - axis.y * sin(angle);
+	result.m[0][3] = 0.0f;
+	result.m[1][0] = axis.y * axis.x * (1 - cos(angle)) - axis.z * sin(angle);
+	result.m[1][1] = axis.y * axis.y * (1 - cos(angle)) + cos(angle);
+	result.m[1][2] = axis.y * axis.z * (1 - cos(angle)) + axis.x * sin(angle);
+	result.m[1][3] = 0.0f;
+	result.m[2][0] = axis.z * axis.x * (1 - cos(angle)) + axis.y * sin(angle);
+	result.m[2][1] = axis.z * axis.y * (1 - cos(angle)) - axis.x * sin(angle);
+	result.m[2][2] = axis.z * axis.x * (1 - cos(angle)) + cos(angle);
+	result.m[2][3] = 0.0f;
+	result.m[3][0] = 0.0f;
+	result.m[3][1] = 0.0f;
+	result.m[3][2] = 0.0f;
+	result.m[3][3] = 1.0f;
+	return result;
 }
