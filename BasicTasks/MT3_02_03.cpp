@@ -21,10 +21,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	int color1 = WHITE;
 
 	Plane plane{ {0.0f,1.0f,0.0f},5.0f };
-	Segment segment{ {0.0f,0.0f,0.0f},{6.0f,4.0f,0.0f} };
+	Segment segment{ {0.0f,-5.0f,0.0f},{0.0f,10.0f,0.0f} };
 	Triangle triangle{};
 	triangle.vertices[0] = { -3.0f,0.0f,3.0f };
-	triangle.vertices[1] = {  0.0f,3.0f,3.0f };
+	triangle.vertices[1] = {  0.0f,0.0f,-10.0f };
 	triangle.vertices[2] = {  3.0f,0.0f,3.0f };
 
 	// ウィンドウの×ボタンが押されるまでループ
