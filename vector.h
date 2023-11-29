@@ -866,3 +866,40 @@ Matrix4x4 MakeRotateAxisAngle(const Vector3& axis, float angle)//行ベクトル
 	result.m[3][3] = 1.0f;
 	return result;
 }
+
+Matrix4x4 DirectionTodirection(const Vector3& from, const Vector3& to)
+{
+	Matrix4x4 result;
+	Vector3 n = Normalize(Cross(from, to));
+	float cosT = Dot(from, to);
+	float sinT = sqrt(Dot(Cross(from, to), Cross(from, to)));
+	if(cosT==-1.0f)
+	{
+		if (from.x != 0 || from.y != 0)
+		{
+			n = { from.y,-from.x,0.0f };
+		}
+		else if (from.x != 0 || from.z != 0)
+		{
+			n = { from.z,0.0f,-from.x };
+		}
+	}
+	result.m[0][0] = n.x * n.x * (1 - cosT) + cosT;
+	result.m[0][1] = n.x * n.y * (1 - cosT) + n.z * sinT;
+	result.m[0][2] = n.x * n.z * (1 - cosT) - n.y * sinT;
+	result.m[0][3] = 0.0f;
+	result.m[1][0] = n.y * n.x * (1 - cosT) - n.z * sinT;
+	result.m[1][1] = n.y * n.y * (1 - cosT) + cosT;
+	result.m[1][2] = n.y * n.z * (1 - cosT) + n.x * sinT;
+	result.m[1][3] = 0.0f;
+	result.m[2][0] = n.z * n.x * (1 - cosT) + n.y * sinT;
+	result.m[2][1] = n.z * n.y * (1 - cosT) - n.x * sinT;
+	result.m[2][2] = n.z * n.z * (1 - cosT) + cosT;
+	result.m[2][3] = 0.0f;
+	result.m[3][0] = 0.0f;
+	result.m[3][1] = 0.0f;
+	result.m[3][2] = 0.0f;
+	result.m[3][3] = 1.0f;
+
+	return result;
+}
