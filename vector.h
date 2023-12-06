@@ -58,7 +58,16 @@ struct Triangle
 	Vector3 vertices[3];
 };
 
-Matrix2x2 Add(Matrix2x2 a, Matrix2x2 b) {
+struct Quaternion
+{
+	float x;
+	float y;
+	float z;
+	float w;
+};
+
+Matrix2x2 Add(Matrix2x2 a, Matrix2x2 b)
+{
 	Matrix2x2 add;
 	for (int x = 0; x < 2; x++) {
 		for (int y = 0; y < 2; y++) {
@@ -901,5 +910,75 @@ Matrix4x4 DirectionTodirection(const Vector3& from, const Vector3& to)
 	result.m[3][2] = 0.0f;
 	result.m[3][3] = 1.0f;
 
+	return result;
+}
+
+Quaternion Multiply(const Quaternion& lhs, const Quaternion& rhs)
+{
+	Quaternion result;
+	result.w = lhs.w * rhs.w - Dot({ lhs.x,lhs.y,lhs.z }, { rhs.x,rhs.y,rhs.z });
+	Vector3 resultV =
+		Add(Cross({ lhs.x,lhs.y,lhs.z }, { rhs.x,rhs.y,rhs.z }),
+		Add(Multiply(rhs.w, { lhs.x,lhs.y,lhs.z }),
+			Multiply(lhs.w, { rhs.x,rhs.y,rhs.z })));
+	result.x = resultV.x;
+	result.y = resultV.y;
+	result.z = resultV.z;
+	return result;
+}
+
+Quaternion identityQuaternion()
+{
+	Quaternion result{ 0,0,0,1 };
+	return result;
+}
+
+Quaternion Conjugate(const Quaternion& quaternion)
+{
+	Quaternion result
+	{
+		-quaternion.x,
+		-quaternion.y,
+		-quaternion.z,
+		quaternion.w
+	};
+	return result;
+}
+
+float Norm(const Quaternion& quaternion)
+{
+	float result = sqrt(
+		quaternion.w * quaternion.w +
+		quaternion.x * quaternion.x +
+		quaternion.y * quaternion.y +
+		quaternion.z * quaternion.z);
+	return result;
+}
+
+Quaternion Normalize(const Quaternion& quaternion)
+{
+	float norm = Norm(quaternion);
+
+	Quaternion result
+	{
+		quaternion.x / norm,
+		quaternion.y / norm,
+		quaternion.z / norm,
+		quaternion.w / norm,
+	};
+	return result;
+}
+
+Quaternion Inverse(const Quaternion& quaternion)
+{
+	float norm = Norm(quaternion)* Norm(quaternion);
+	Quaternion conjugation = Conjugate(quaternion);
+	Quaternion result =
+	{
+		conjugation.x / norm,
+		conjugation.y / norm,
+		conjugation.z / norm,
+		conjugation.w / norm
+	};
 	return result;
 }
