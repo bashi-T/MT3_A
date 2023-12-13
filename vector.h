@@ -353,7 +353,7 @@ float Length(const Vector3& v) {
 }
 
 
-Vector3 Normalize(const Vector3& v) {//正規化
+Vector3 Normalize(const Vector3& v) {//正規化・単位ベクトル
 	float length;
 	length = sqrt(v.x * v.x + v.y * v.y + v.z * v.z);
 
@@ -954,7 +954,7 @@ float Norm(const Quaternion& quaternion)
 	return result;
 }
 
-Quaternion Normalize(const Quaternion& quaternion)
+Quaternion Normalize(const Quaternion& quaternion)//正規化・単位Quaternion
 {
 	float norm = Norm(quaternion);
 
@@ -979,5 +979,64 @@ Quaternion Inverse(const Quaternion& quaternion)
 		conjugation.z / norm,
 		conjugation.w / norm
 	};
+	return result;
+}
+
+Quaternion MakerotateAxisQuaternion(const Vector3& axis, float angle)
+{
+	Quaternion result;
+	Vector3 axisN;
+	axisN.x = Normalize(axis).x;
+	axisN.y = Normalize(axis).y;
+	axisN.z = Normalize(axis).z;
+	result =
+	{
+		std::sin(axisN.x * angle / 2),
+		std::sin(axisN.y * angle / 2),
+		std::sin(axisN.z * angle / 2),
+		std::cos(angle / 2)
+	};
+	return Normalize(result);
+}
+
+Vector3 RotateVector(const Vector3& vector, const Quaternion& quaternion)
+{
+	Quaternion quatV = { vector.x,vector.y,vector.z,0.0f };
+	Vector3 result =
+	{
+		Multiply(quaternion,Multiply(quatV, Inverse(quaternion))).x,
+		Multiply(quaternion,Multiply(quatV, Inverse(quaternion))).y,
+		Multiply(quaternion,Multiply(quatV, Inverse(quaternion))).z,
+	};
+
+	return result;
+}
+
+Matrix4x4 MakeRotateMatrix(const Quaternion& quaternion)
+{
+	Matrix4x4 result;
+	result.m[0][0] = (quaternion.w * quaternion.w) + (quaternion.x * quaternion.x) -
+		             (quaternion.y * quaternion.y) - (quaternion.z * quaternion.z);
+	result.m[0][1] = 2.0f * ((quaternion.x * quaternion.y) + (quaternion.w * quaternion.z));
+	result.m[0][2] = 2.0f * ((quaternion.x * quaternion.z) - (quaternion.w * quaternion.y));
+	result.m[0][3] = 0;
+
+	result.m[1][0] = 2.0f * ((quaternion.x * quaternion.y) - (quaternion.w * quaternion.z));
+	result.m[1][1] = (quaternion.w * quaternion.w) - (quaternion.x * quaternion.x) +
+		             (quaternion.y * quaternion.y) - (quaternion.z * quaternion.z);
+	result.m[1][2] = 2.0f * ((quaternion.y * quaternion.z) + (quaternion.w * quaternion.x));
+	result.m[1][3] = 0;
+
+	result.m[2][0] = 2.0f * ((quaternion.x * quaternion.z) + (quaternion.w * quaternion.y));
+	result.m[2][1] = 2.0f * ((quaternion.y * quaternion.z) - (quaternion.w * quaternion.x));
+	result.m[2][2] = (quaternion.w * quaternion.w) - (quaternion.x * quaternion.x) -
+		             (quaternion.y * quaternion.y) + (quaternion.z * quaternion.z);
+	result.m[2][3] = 0;
+
+	result.m[3][0] = 0;
+	result.m[3][1] = 0;
+	result.m[3][2] = 0;
+	result.m[3][3] = 1;
+
 	return result;
 }
