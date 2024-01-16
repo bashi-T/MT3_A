@@ -1040,3 +1040,37 @@ Matrix4x4 MakeRotateMatrix(const Quaternion& quaternion)
 
 	return result;
 }
+
+Quaternion Slerp(const Quaternion& q0, const Quaternion& q1, float t)
+{
+	Quaternion result;
+	float dot = q0.w * q1.w + q0.x * q1.x + q0.y * q1.y + q0.z * q1.z;
+	if (dot < 0)
+	{
+		const Quaternion& q2 = { -q0.x,-q0.y,-q0.z,-q0.w };
+		dot = -dot;
+
+		float theta = std::acos(dot);
+
+		float scale0 = std::sin((1 - t) * theta) / std::sin(theta);
+		float scale1 = std::sin(t * theta) / std::sin(theta);
+
+		result.x = scale0 * q2.x + scale1 * q1.x;
+		result.y = scale0 * q2.y + scale1 * q1.y;
+		result.z = scale0 * q2.z + scale1 * q1.z;
+		result.w = scale0 * q2.w + scale1 * q1.w;
+		return result;
+	} else
+	{
+		float theta = std::acos(dot);
+
+		float scale0 = std::sin((1 - t) * theta) / std::sin(theta);
+		float scale1 = std::sin(t * theta) / std::sin(theta);
+
+		result.x = scale0 * q0.x + scale1 * q1.x;
+		result.y = scale0 * q0.y + scale1 * q1.y;
+		result.z = scale0 * q0.z + scale1 * q1.z;
+		result.w = scale0 * q0.w + scale1 * q1.w;
+		return result;
+	}
+}

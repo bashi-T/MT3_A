@@ -26,11 +26,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		/// ↓更新処理ここから
 		///
 
-		Quaternion rotation = MakerotateAxisQuaternion(Normalize(Vector3{ 1.0f,0.4f,-0.2f }), 0.45f);
-		Vector3 pointY = { 2.1f,-0.9f,1.3f };
-		Matrix4x4 rotateMatrix = MakeRotateMatrix(rotation);
-		Vector3 rotateByQuaternion = RotateVector(pointY, rotation);
-		Vector3 rotateByMatrix = Transform(pointY, rotateMatrix);
+		Quaternion rotation0 = MakerotateAxisQuaternion(Normalize(Vector3{ 0.71f,0.71f,0.0f }), 0.3f);
+		Quaternion rotation1 = MakerotateAxisQuaternion(Normalize(Vector3{ 0.71f,0.0f,0.71f }), 3.141592f);
+
+		Quaternion interpolate0 = Slerp(rotation0, rotation1, 0.0f);
+		Quaternion interpolate1 = Slerp(rotation0, rotation1, 0.3f);
+		Quaternion interpolate2 = Slerp(rotation0, rotation1, 0.5f);
+		Quaternion interpolate3 = Slerp(rotation0, rotation1, 0.7f);
+		Quaternion interpolate4 = Slerp(rotation0, rotation1, 1.0f);
 		///
 		/// ↑更新処理ここまで
 		///
@@ -39,12 +42,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		/// ↓描画処理ここから
 		///
 		
-		Novice::ScreenPrintf(0, 0, "%.02f,%.02f,%.02f,%.02f :rotation", rotation.x, rotation.y, rotation.z, rotation.w);
-		Novice::ScreenPrintf(0, 20, "rotateMatrix");
-		MatrixScreenPrintf(0, 40, rotateMatrix);
-		Novice::ScreenPrintf(0, 120, "%.02f,%.02f,%.02f :rotateByQuaternion", rotateByQuaternion.x, rotateByQuaternion.y, rotateByQuaternion.z);
-		Novice::ScreenPrintf(0, 140, "%.02f,%.02f,%.02f :rotateByMatrix", rotateByMatrix.x, rotateByMatrix.y, rotateByMatrix.z);
-
+		Novice::ScreenPrintf(0, 00, "%.02f, %.02f, %.02f, %.02f :interpolate0, Slep(q0, q1, 0.0f)", interpolate0.x, interpolate0.y, interpolate0.z, interpolate0.w);
+		Novice::ScreenPrintf(0, 20, "%.02f, %.02f, %.02f, %.02f :interpolate1, Slep(q0, q1, 0.3f)", interpolate1.x, interpolate1.y, interpolate1.z, interpolate1.w);
+		Novice::ScreenPrintf(0, 40, "%.02f, %.02f, %.02f, %.02f :interpolate2, Slep(q0, q1, 0.5f)", interpolate2.x, interpolate2.y, interpolate2.z, interpolate2.w);
+		Novice::ScreenPrintf(0, 60, "%.02f, %.02f, %.02f, %.02f :interpolate3, Slep(q0, q1, 0.7f)", interpolate3.x, interpolate3.y, interpolate3.z, interpolate3.w);
+		Novice::ScreenPrintf(0, 80, "%.02f, %.02f, %.02f, %.02f :interpolate4, Slep(q0, q1, 1.0f)", interpolate4.x, interpolate4.y, interpolate4.z, interpolate4.w);
 		///
 		/// ↑描画処理ここまで
 		///
